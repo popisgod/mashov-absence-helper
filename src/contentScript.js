@@ -19,20 +19,30 @@
                     elements.forEach(item => {
                         const itemDate = extractDateFromItem(item); // Implement this function
                         const itemClassHour = extractClassHourFromItem(item); // Implement this function
+                        const isButtonDisabled = isButtonDisabledInItem(item);
+
 
                         // Check if there is a matching justification in the list
                         const justificationMatch = justificationList.some(justification => {
-                            const justificationStartDate = new Date(justification.startDate).toLocaleDateString();
+                            const justificationStartDate = justification.startDate ? new Date(justification.startDate).toLocaleDateString() : null;
                             const justificationStartLesson = justification.startLesson;
 
                             return (
+                                itemDate &&
                                 justificationStartDate === itemDate.toLocaleDateString() &&
                                 justificationStartLesson === itemClassHour
                             );
                         });
 
+                        console.log('Item:', item);
+                        console.log('Justification Match:', justificationMatch);
+                        console.log('Button Disabled:', isButtonDisabled);
+                        console.log('---');
+
+
                         // If there is a match, hide the item
-                        if (justificationMatch) {
+                        if (justificationMatch ||
+                            isButtonDisabled) {
                             item.remove()
                         }
                     });
@@ -53,17 +63,27 @@
                 .then(response => response.json())
                 .then(justificationList => {
                     // Convert the justification data to a list
-                    justificationList = Array.isArray(justificationList) ? justificationList : [];
+                     if (!Array.isArray(justificationList)){
+                         return;
+                     }
 
                     // Call hideListItems with the justification data
                     hideListItems(justificationList);
+
+                    // Add event listener for window resize
+                    window.addEventListener('resize', function () {
+                        hideListItems(justificationList);
+                    });
+
+                    // Add event listener for window scroll with debouncing
+                    let scrollTimeout;
+                    window.addEventListener('scroll', function () {
+                        clearTimeout(scrollTimeout);
+                        scrollTimeout = setTimeout(function () {
+                            hideListItems(justificationList);
+                        }, 200); // Adjust the timeout as needed
+                    });
                 });
-
-            // Add event listener for window resize
-            window.addEventListener('resize', hideListItems);
-
-            // Add event listener for window scroll
-            window.addEventListener('scroll', hideListItems);
         }
     });
 })();
@@ -76,4 +96,35 @@ function waitForElements(selector, callback) {
             callback(elements);
         }
     }, 0); // adjust the interval as needed
+}
+
+// Function to extract the date from an HTML list item
+function extractDateFromItem(item) {
+    const dateElement = item.querySelector('[fxlayoutalign="end center"]');
+    if (dateElement) {
+        const dateMatch = dateElement.textContent.match(/(\d{2}\/\d{2}\/\d{4})/);
+        if (dateMatch && dateMatch[1]) {
+            const [day, month, year] = dateMatch[1].split('/');
+            return new Date(`${year}-${month}-${day}`);
+        }
+    }
+    return null;
+}
+
+// Function to extract the class hour from an HTML list item
+function extractClassHourFromItem(item) {
+    const dateElement = item.querySelector('[fxlayoutalign="end center"]');
+    if (dateElement) {
+        const classHourMatch = dateElement.textContent.match(/שיעור (\d+)/);
+        if (classHourMatch && classHourMatch[1]) {
+            return parseInt(classHourMatch[1], 10);
+        }
+    }
+    return null;
+}
+
+function isButtonDisabledInItem(item) {
+    const button = item.querySelector('span > span > div > div.ng-star-inserted > button'); // Assuming the button is a direct child
+    const disabled = !button.disabled;
+    return button && disabled;
 }
