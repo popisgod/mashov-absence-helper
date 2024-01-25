@@ -12,7 +12,6 @@
 
       // Construct the URL with the dynamic student ID
       const fetchUrl = `https://web.mashov.info/api/students/${studentId}/justificationRequests`;
-      console.log(request.csrfToken);
 
 
       // Make a fetch request to the different URL using the same credentials
@@ -36,11 +35,3 @@
   });
 })();
 
-function findCsrfToken(cookies) {
-  for (let i = 0; i < cookies.length; i++) {
-    if (cookies[i].name === 'Csrf-Token') {
-      return cookies[i].value;
-    }
-  }
-  return null;
-}
