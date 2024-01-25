@@ -1,6 +1,6 @@
 chrome.tabs.onUpdated.addListener(function(details) {
   chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-    if (tabs[0].url) {
+    if (tabs[0] && tabs[0].url) {
       const currentUrl = new URL(tabs[0].url);
 
       // Check if the current URL matches the one you want to filter

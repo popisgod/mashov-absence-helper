@@ -16,7 +16,8 @@
 	"content_scripts" : [
 		{
 			"matches" : ["https://web.mashov.info/*"],
-			"js" : ["src/contentScript.js"]
+			"js" : ["src/contentScript.js"],
+			"run_at":  "document_start"
 		}
 	], 
 	"web_accessible_resources" : [
@@ -31,7 +32,7 @@
 		"default_icon" : {
 		}, 
 		"default_title" : "mashov_helper", 
-		"default_popup" : "mashov_helper.html"
+		"default_popup" : "src/mashov_helper.html"
 	}, 
 	"manifest_version" : 3
 }
