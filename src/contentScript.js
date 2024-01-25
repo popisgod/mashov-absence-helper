@@ -12,7 +12,7 @@
 
       // Construct the URL with the dynamic student ID
       const fetchUrl = `https://web.mashov.info/api/students/${studentId}/justificationRequests`;
-
+      console.log(request.csrfToken);
 
 
       // Make a fetch request to the different URL using the same credentials
@@ -20,7 +20,7 @@
         method: 'GET',
         credentials: 'include',
         headers: {
-          'X-Csrf-Token': csrfToken
+          'X-Csrf-Token': request.csrfToken
         },
       })
           .then(response => response.text())
