@@ -1,0 +1,38 @@
+{
+	"name" : "mashov-absence-helper", 
+	"version" : "0.1.0", 
+	"description" : "", 
+	"permissions" : [
+		"storage", 
+		"tabs",
+		"webNavigation",
+		"scripting",
+		"cookies"
+	], 
+	"host_permissions" : ["https://web.mashov.info/*"],
+	"background" : {
+		"service_worker" : "background.js"
+	},
+	"content_scripts" : [
+		{
+			"matches" : ["https://*/*"],
+			"js" : ["contentScript.js"]
+		}
+	], 
+	"web_accessible_resources" : [
+		{
+			"resources" : [
+				
+			],
+			"matches" : ["https://web.mashov.info/*"]
+		}
+	],
+	"action" : {
+		"default_icon" : {
+
+		}, 
+		"default_title" : "mashov_helper", 
+		"default_popup" : "mashov_helper.html"
+	}, 
+	"manifest_version" : 3
+}
